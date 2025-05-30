@@ -1,85 +1,59 @@
-# LLM Chatbot with Microservices Architecture and Docker Containerization.
+# Dockerized AI Chatbot
 
-## Overview
+[![License](https://img.shields.io/badge/License-Apache2.0-blue.svg)](LICENSE)
 
-This project demonstrates building a simple yet scalable LLM chat application using microservices architecture and Docker for containerization. It provides a user-friendly web interface to interact with OpenAI's GPT models through a chat interface.
+## Description
 
-## Technical Blog or Article explaninig the project
+Dockerized AI Chatbot is an open-source project that provides a chatbot powered by artificial intelligence, specifically built using OpenAI's GPT-3 (Language Model) for natural language processing and understanding. The chatbot leverages Qdrant as a vector space index for efficient semantic search and similarity matching, resulting in more accurate responses.
 
-[Technical Blog Link: Code](https://shaktiwadekar.medium.com/learning-to-build-scalable-llm-chat-application-microservices-architecture-and-docker-93ea1335871e)
+Please note that before running the Docker container, users are required to prepare the vector space data using Qdrant. The prepared vector space data should be made available for the chatbot to access during its runtime.
 
-[Technical Blog Link: AWS](https://shaktiwadekar.medium.com/understanding-scalable-deployment-tools-on-aws-aws-ecr-ecs-alb-iam-and-secrets-manager-8869c937de88)
+The Dockerized AI Chatbot maintains the context of conversations for up to 600 seconds (10 minutes). This means that the chatbot can retain information about the ongoing conversation, allowing for more coherent and relevant responses.
 
+This project aims to make it easy for developers to deploy and use a conversational AI system in their applications, websites, or platforms. By packaging the chatbot as a Docker container, it simplifies the deployment process, making it convenient to integrate into various environments.
 
-## Files information
+## Table of Contents
 
-### Components
+- [Installation](#installation)
+- [Usage](#usage)
+- [Configuration](#configuration)
 
-- **Frontend Service**
-  - Built with Gradio for an interactive chat interface
-  - Runs on port 7860
-  - Communicates with the backend service
+## Installation
 
-- **Backend Service**
-  - Built with FastAPI
-  - Handles API requests to OpenAI
-  - Runs on port 8000
-  - Requires OpenAI API key
+To run the Dockerized AI Chatbot, you must have Docker installed on your machine. If you don't have Docker yet, you can download and install it from the official website: [https://www.docker.com/](https://www.docker.com/)
 
-## Prerequisites
+Once Docker is installed, you can pull the chatbot image from Docker Hub using the following command:
 
-1. Docker and Docker Compose installed on your system
-2. OpenAI API key
-3. Create a `.env` file in the root directory with:
-   ```
-   OPENAI_API_KEY=your_api_key_here
-   ```
+```bash
+docker pull roshanpatil/ai-chatbot:latest
+```
 
-## Running the Application
+## Usage
 
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   cd <repository-directory>
-   ```
+Before running the chatbot, ensure that you have already prepared the vector space data using Qdrant. Once you have the vector space data ready, you can start the AI chatbot using the following command:
 
-2. Create the `.env` file with your OpenAI API key as shown above
+```bash
+docker run -p 8080:8080 --env-file .env roshanpatil/ai-chatbot:latest
+```
 
-3. Build and start the containers:
-   ```bash
-   docker-compose up --build
-   ```
+Once the container is running, open the chatbot interface by visiting the following link in your web browser: <http://localhost:8080>
 
-4. Access the application:
-   - Open your browser and go to: `http://localhost:7860`
-   - The chat interface will be ready to use
+## Configuration
 
-## Testing the Application
+To Dockerized AI Chatbot, you need to prepare `.env` file with proper values in it.
 
-1. The frontend will be available at: `http://localhost:7860`
-2. The backend API will be available at: `http://localhost:8000`
-3. Try the example prompts provided in the interface:
-   - "Tell me a joke"
-   - "What is the meaning of life?"
-   - "Write a short poem"
+| Environment Variable         | Description                          |
+|------------------------------|--------------------------------------|
+|  DOMAIN                      |  This is domain for which chat bot will operate.                           This will not generate answer beyond it |
+|  OPENAI_API_TYPE             |  Type of OPEN AI type |
+|  OPENAI_API_BASE             |  OPEN AI API host     |
+|  OPENAI_API_KEY              |  OPEN AI API Key           |
+|  OPENAI_API_VERSION          |  OPEN AI API Version        |
+|  OPENAI_DEPLOYMENT_ID        |  Name of model          |
+|  QDRANT_URL                  |  Qdrant Cluster URL            |
+|  QDRANT_API_KEY              |  Qdrant API Key            |
+|  QDRANT_COLLECTION_NAME      |  Name of collection in vector  |
 
-## Development
+## License
 
-- Frontend modifications can be made in `frontend/app.py`
-- Backend modifications can be made in `backend/app.py`
-- After making changes, rebuild the containers:
-  ```bash
-  docker-compose down
-  docker-compose up --build
-  ```
-
-## Troubleshooting
-
-1. If you see API key errors, ensure your `.env` file is properly configured
-2. If containers fail to start, check if ports 7860 and 8000 are available
-3. For connection issues, ensure both services are running:
-   ```bash
-   docker-compose ps
-   ```
-
-
+This project is licensed under the Apache License.
