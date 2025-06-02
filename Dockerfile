@@ -7,6 +7,8 @@ WORKDIR /app
 # Copy requirements first to leverage Docker cache
 COPY requirements.txt .
 
+RUN pip install --no-cache-dir -r requirements.txt
+
 # Install dependencies with error logging and ensure pip is up-to-date
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt || { echo "Failed to install dependencies"; exit 1; }
