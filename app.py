@@ -1,9 +1,17 @@
 from flask import Flask, request, jsonify, send_from_directory
 import os
 import vertexai
-from vertexai.preview.language_models import ChatModel, InputOutputTextPair
+from vertexai.generative_models import GenerativeModel, ChatSession
 
 app = Flask(__name__, static_folder='.', static_url_path='')
+
+# Initialize Vertex AI
+project_id = "black-cirrus-461305-f6"
+location = "us-central1"
+vertexai.init(project=project_id, location=location)
+
+# Load Gemini model
+model = GenerativeModel("gemini-1.5-flash")
 
 @app.route('/')
 def serve_index():
@@ -11,17 +19,6 @@ def serve_index():
 
 @app.route('/chat', methods=['POST'])
 def chat():
-    # Initialize Vertex AI on demand
-    project_id = "black-cirrus-461305-f6"
-    location = "us-central1"
-    vertexai.init(project=project_id, location=location)
-
-    # Load Gemini model
-    try:
-        chat_model = ChatModel.from_pretrained("gemini-1.5-flash")
-    except Exception as e:
-        return jsonify({"response": f"Error loading model: {str(e)}"}), 500
-
     data = request.get_json()
     if not data or 'message' not in data:
         return jsonify({"error": "Please provide a message"}), 400
@@ -29,25 +26,24 @@ def chat():
     user_message = data['message']
     
     # Start a chat session with Gemini
-    chat = chat_model.start_chat(
-        context="You are a helpful assistant that answers questions accurately.",
-        examples=[
-            InputOutputTextPair(
-                input_text="What is the capital of France?",
-                output_text="The capital of France is Paris."
-            )
+    chat = model.start_chat(
+        history=[
+            {"role": "user", "parts": ["What is the capital of France?"]},
+            {"role": "model", "parts": ["The capital of France is Paris."]}
         ]
     )
     
     # Send user input to Gemini and get response
-    parameters = {
-        "temperature": 0.2,
-        "max_output_tokens": 256,
-        "top_p": 0.8,
-        "top_k": 40
-    }
     try:
-        response = chat.send_message(user_message, **parameters)
+        response = chat.send_message(
+            content=user_message,
+            generation_config={
+                "temperature": 0.2,
+                "max_output_tokens": 256,
+                "top_p": 0.8,
+                "top_k": 40
+            }
+        )
         bot_response = response.text
     except Exception as e:
         bot_response = f"Error: {str(e)}"
