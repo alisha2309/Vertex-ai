@@ -11,8 +11,8 @@ COPY requirements.txt .
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt || { echo "Failed to install dependencies"; exit 1; }
 
-# Copy application code
-COPY app.py .
+# Copy all files (including app.py and index.html)
+COPY . .
 
 # Expose port (Cloud Run requires 8080)
 EXPOSE 8080
