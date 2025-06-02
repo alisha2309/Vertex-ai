@@ -1,7 +1,7 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 import os
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='.', static_url_path='')
 
 # Simple chatbot logic
 def get_bot_response(message):
@@ -15,8 +15,8 @@ def get_bot_response(message):
     return responses.get(message, "Sorry, I didn't understand that. Try something else!")
 
 @app.route('/')
-def home():
-    return jsonify({"message": "Welcome to the Chatbot API! Use POST /chat to interact."})
+def serve_index():
+    return send_from_directory('.', 'index.html')
 
 @app.route('/chat', methods=['POST'])
 def chat():
