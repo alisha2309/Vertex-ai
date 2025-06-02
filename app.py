@@ -5,20 +5,23 @@ from vertexai.preview.language_models import ChatModel, InputOutputTextPair
 
 app = Flask(__name__, static_folder='.', static_url_path='')
 
-# Initialize Vertex AI
-project_id = "black-cirrus-461305-f6"
-location = "us-central1"
-vertexai.init(project=project_id, location=location)
-
-# Load Gemini model
-chat_model = ChatModel.from_pretrained("gemini-1.5-flash")
-
 @app.route('/')
 def serve_index():
     return send_from_directory('.', 'index.html')
 
 @app.route('/chat', methods=['POST'])
 def chat():
+    # Initialize Vertex AI on demand
+    project_id = "black-cirrus-461305-f6"
+    location = "us-central1"
+    vertexai.init(project=project_id, location=location)
+
+    # Load Gemini model
+    try:
+        chat_model = ChatModel.from_pretrained("gemini-1.5-flash")
+    except Exception as e:
+        return jsonify({"response": f"Error loading model: {str(e)}"}), 500
+
     data = request.get_json()
     if not data or 'message' not in data:
         return jsonify({"error": "Please provide a message"}), 400
