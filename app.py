@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, send_from_directory
 import os
 import vertexai
-from vertexai.generative_models import GenerativeModel, ChatMessage
+from vertexai.generative_models import GenerativeModel
 
 app = Flask(__name__, static_folder='.', static_url_path='')
 
@@ -28,14 +28,8 @@ def chat():
     # Start a chat session with Gemini
     chat = model.start_chat(
         history=[
-            ChatMessage(
-                role="user",
-                content="What is the capital of France?"
-            ),
-            ChatMessage(
-                role="model",
-                content="The capital of France is Paris."
-            )
+            {"role": "user", "parts": ["What is the capital of France?"]},
+            {"role": "model", "parts": ["The capital of France is Paris."]}
         ]
     )
     
